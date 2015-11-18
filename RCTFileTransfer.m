@@ -70,7 +70,18 @@ RCT_EXPORT_METHOD(upload:(NSDictionary *)input callback:(RCTResponseSenderBlock)
       fileData = UIImagePNGRepresentation(image);
     }
 
-    [self sendData:fileData withOptions:input callback:callback];
+    NSMutableDictionary *data;
+    if (input[@"data"]) {
+      data = [input objectForKey:@"data"];
+    } else {
+      data = [NSMutableDictionary new];
+    }
+
+    NSMutableDictionary *newInput = [[NSMutableDictionary alloc] initWithDictionary:input copyItems:YES];
+    [data addEntriesFromDictionary: @{ @"metadata" : [rep metadata] }];
+    [newInput setObject:data forKey:@"data"];
+
+    [self sendData:fileData withOptions:newInput callback:callback];
 
     //    Byte *buffer = (Byte*)malloc(rep.size);
     //    NSUInteger buffered = [rep getBytes:buffer fromOffset:0.0 length:rep.size error:nil];
