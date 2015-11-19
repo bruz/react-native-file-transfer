@@ -72,13 +72,15 @@ RCT_EXPORT_METHOD(upload:(NSDictionary *)input callback:(RCTResponseSenderBlock)
 
     NSMutableDictionary *data;
     if (input[@"data"]) {
-      data = [input objectForKey:@"data"];
+      data = [[NSMutableDictionary alloc] initWithDictionary:[input objectForKey:@"data"] copyItems:YES];
     } else {
       data = [NSMutableDictionary new];
     }
 
+    NSDictionary *metadata = [rep metadata];
+    [data addEntriesFromDictionary: @{ @"metadata" : @{ @"exif": metadata[@"{Exif}"], @"gps": metadata[@"{GPS}"], @"filename": [rep filename] } }];
+
     NSMutableDictionary *newInput = [[NSMutableDictionary alloc] initWithDictionary:input copyItems:YES];
-    [data addEntriesFromDictionary: @{ @"metadata" : [rep metadata] }];
     [newInput setObject:data forKey:@"data"];
 
     [self sendData:fileData withOptions:newInput callback:callback];
