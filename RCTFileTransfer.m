@@ -78,7 +78,11 @@ RCT_EXPORT_METHOD(upload:(NSDictionary *)input callback:(RCTResponseSenderBlock)
     }
 
     NSDictionary *metadata = [rep metadata];
-    [data addEntriesFromDictionary: @{ @"metadata" : @{ @"exif": metadata[@"{Exif}"], @"gps": metadata[@"{GPS}"], @"filename": [rep filename] } }];
+    [data addEntriesFromDictionary: @{ @"metadata" : @{ @"exif": metadata[@"{Exif}"], @"filename": [rep filename] } }];
+
+    if (metadata[@"{GPS}"]) {
+      [data setObject:metadata[@"{GPS}"] forKey:@"gps"];
+    }
 
     NSMutableDictionary *newInput = [[NSMutableDictionary alloc] initWithDictionary:input copyItems:YES];
     [newInput setObject:data forKey:@"data"];
